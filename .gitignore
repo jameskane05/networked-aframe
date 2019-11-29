@@ -57,3 +57,5 @@ server/static/build.js
 
 # Webstorm
 /.idea/*
+
+*.pem
