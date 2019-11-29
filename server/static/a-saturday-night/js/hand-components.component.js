@@ -13,10 +13,13 @@ AFRAME.registerComponent('hand-components', {
     var hand = this.data;
     var controlConfiguration = {
       hand: hand,
-      model: false,
+      /* this controller config setting tell it whether to use the default model, I think. Commenting out: */
+      // model: false,
       rotationOffset: hand === 'left' ? 90 : -90
     };
     el.setAttribute('vive-controls', controlConfiguration);
     el.setAttribute('oculus-touch-controls', controlConfiguration);
+    el.setAttribute('vive-focus-controls', controlConfiguration);
+    el.setAttribute('oculus-go-controls', controlConfiguration);
   }
 });

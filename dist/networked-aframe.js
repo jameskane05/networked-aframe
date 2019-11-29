@@ -431,8 +431,6 @@
 	      var networkId = entityData.networkId;
 	      var el = NAF.schemas.getCachedTemplate(entityData.template);
 
-	      el.setAttribute('id', 'naf-' + networkId);
-
 	      this.initPosition(el, entityData.components);
 	      this.initRotation(el, entityData.components);
 	      this.addNetworkComponent(el, entityData);
@@ -546,8 +544,7 @@
 	  }, {
 	    key: 'addEntityToParent',
 	    value: function addEntityToParent(entity, parentId) {
-	      var parentEl = document.getElementById('naf-' + parentId);
-	      parentEl.appendChild(entity);
+	      this.entities[parentId].appendChild(entity);
 	    }
 	  }, {
 	    key: 'addEntityToSceneRoot',
@@ -581,7 +578,7 @@
 	          var persists = void 0;
 	          var component = this.entities[id].getAttribute('networked');
 	          if (component && component.persistent) {
-	            persists = NAF.utils.takeOwnership(this.entities[id]);
+	            persists = NAF.utils.isMine(this.entities[id]) || NAF.utils.takeOwnership(this.entities[id]);
 	          }
 	          if (!persists) {
 	            var entity = this.removeEntity(id);
@@ -1763,6 +1760,7 @@
 
 	AFRAME.registerSystem("networked", {
 	  init: function init() {
+	    // An array of "networked" component instances.
 	    this.components = [];
 	    this.nextSyncTime = 0;
 	  },
@@ -1784,6 +1782,7 @@
 	      if (!NAF.connection.adapter) return;
 	      if (this.el.clock.elapsedTime < this.nextSyncTime) return;
 
+	      // "d" is an array of entity datas per entity in this.components.
 	      var data = { d: [] };
 
 	      for (var i = 0, l = this.components.length; i < l; i++) {
@@ -1863,8 +1862,17 @@
 
 	    this.initNetworkParent();
 
+	    var networkId = void 0;
+
 	    if (this.data.networkId === '') {
-	      this.el.setAttribute(this.name, { networkId: NAF.utils.createNetworkId() });
+	      networkId = NAF.utils.createNetworkId();
+	      this.el.setAttribute(this.name, { networkId: networkId });
+	    } else {
+	      networkId = this.data.networkId;
+	    }
+
+	    if (!this.el.id) {
+	      this.el.setAttribute('id', 'naf-' + networkId);
 	    }
 
 	    if (wasCreatedByNetwork) {
