@@ -14,7 +14,7 @@ AFRAME.registerComponent('hand-components', {
     var controlConfiguration = {
       hand: hand,
       /* this controller config setting tell it whether to use the default model, I think. Commenting out: */
-      // model: false,
+      model: true,
       rotationOffset: hand === 'left' ? 90 : -90
     };
     el.setAttribute('vive-controls', controlConfiguration);
